@@ -1,0 +1,9 @@
+Resources:
+  Bucket:
+    Type: 'AWS::S3::Bucket'  #will auto-assign a bucket name
+  Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      KeyName: '<EC2-KEY-PAIR>'
+      InstanceType: "t2.micro" 
+      ImageId: '<REGION-IMAGE-ID>' #ami-04d29b6f966df1537 us-east-1

@@ -1,0 +1,7 @@
+- an integrated solution that groups CICD services, I.e. Github, AWS Code* group, CloudFormation, CloudWatch
+- to create 'CICD-ready' projects for EC2, Lambda, EB easily
+- issue tracking integration with Jira / GitHub Issues
+- can integrate with Cloud9 web IDE
+- one dashboard to view all components
+- free service; pay only underlying services usage
+- limited customisation capability
