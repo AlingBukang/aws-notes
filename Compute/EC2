@@ -1,0 +1,123 @@
+
+# Purchasing Options
+ - On-Demand - for short workloads, predictable pricing, per by second
+    - has the highest cost but no upfront payment and no long term commitment
+    - Linux and Windows OS - per second billing after the first minute
+    - All other OS - per hour billing
+
+ - Reserved (1 to 3 years) 
+    - Can reserve specific instance attributes (Instance type, Region, Tenancy, OS)
+    - Payment options: no upfront, partial upfront, all upfront
+    - Recommended for steady state usage applications such as databases
+    - Can resell reserved instances in Marketplace
+    Types:
+    - Reserved Instances - for long workloads
+    - Convertible Reserved Instances - for long workloads with flexible instance attributes
+ 
+
+ - Saving Plan (1 to 3 years) - commit to an amount of usage, for long workloads
+    - Discounted based on long-term usage
+    - Commit to a certain type of usage
+    - Usage beyond Savings Plan will be billed at On-Demand pricing
+    - Locked to a specific instance family and region
+        - Flexible on:
+            - Instance size
+            - OS
+            - Tenancy
+    
+
+ - Spot Instances - for short repeatable workloads that are resilient to failures, cheap, can lose instance 
+    - Most cost-efficient option
+    - Up to 90% discount compared to On-Demand
+    - Instances can be reclaimed/terminated any time is the max price set is less than the current spot price
+
+
+ - Dedicated Hosts - book an entire physical server, can control instance placement, good for OS with strict license requirements
+    - The most expensive option
+    - An entire physical server with EC2 instance capacity fully dedicated to your use
+    - For strict compliance requirements and able to use existing server-bound software licenses(per-socket, per-core, per-VM software licenses)
+    Options:
+     - On-demand - pay per second for active Dedicated Hosts
+     - Reserved - 1 or 3 years commitment (no upfront, partial upfront, or all upfront payment)
+
+ - Dedicated Instances - no other customers will share the hardware but no guarantee to relaunch on the same server all the time
+    - Instances run on hardware that's dedicated to you
+    - May share hardware with other instances in same account
+    - No control over instance placement
+
+ - Capacity Reservations - reserve capacity is a specific AZ for any duration
+    - Reserved On-Demand instaces in a specific AZ for any duration anytime
+    - No time commitment
+    - No billing discounts
+    - Combine with Regional Reserved Instances and Savings Plan to benefit from billing discounts
+    - Charged On-Demand rates whether instance is running or not
+
+
+# Instance Placement Strategy
+ - Cluster - cluster instances into a low-latency group in a single AZ
+    - same rack, same AZ
+    Pros: low latency(10 Gbps bandwidth between instances)
+    Cons: If rack fails, all instances fail at the same time; single point of failure
+    Use Case: 
+        - Big Data jobs that needs to complete fast
+        - Applications that need extremely low latency and high network throughput requirement
+
+ - Spread - spread instances across underlying hardware(max 7 instances per group per AZ); good for critical applications
+    - EC2 instances are on different physical hardware
+    Pros: 
+        - can span across AZs
+        - reduced risk on simultaneous failure
+    Cons:
+        - limited to 7 instances per AZ per placement group
+    Use Case:
+        - for applications that need to maximise high availability
+        - for critical applications where each instance must be isolated from failure from each other    
+
+
+ - Partition - spread instances across many different partitions(which rely on different sets of racks) within an AZ. Scales to hundres of EC2 instances per group.
+    Pros:
+        - can span across multiple AZs in the same region
+        - up to 7 partions per AZ
+        - up to hunders of EC2 instances
+        - the instaces in a partition do not share racks with the instaces in other partitions
+        - a partition failure won't affect other instances on other partitions
+        - EC2 instances get access to the partition information as metadata
+    Cons:
+
+    Use Case:
+        - for Big Data applications which require high availability
+
+
+# Ways to connect to EC2 instance
+    - ssh - needs assymetric keys(private/public keys), configure security group, inbound ports or bastion host if using NAT instance
+    - instance connect - configure security group, inbound ports
+    - session manager - most secure; no need to open inbound ports nor bastion hosts
+
+
+# Elastic IP
+ - When an EC2 instance is restarted, the public IP changes
+ - Use Elastic IP when you need to have a fix public IP
+ - An Elastic IP is an IPv4 you own unless you delete it
+ - It can be attached to one instance at a time
+ - It can be remapped across instances
+ - It's free when it is attached to an instance otherwise you will be billed
+ - Max 5 Elastic IP per account or request for more via AWS
+ Use Case:
+    - To mask the failure of an instance or software by rapidly remapping the address to another instance in your account
+ Alternative to EIP:
+    - Use random public IP and register a DNS name to it
+    - Use a load balancer with a static hostname
+
+
+
+# EC2 stop vs terminate vs hibernate
+- Stop - the data on the disk(EBS) is kept intact for the next start
+- Terminate - any EBS volumes(root) also set-up to be destroyed will be lost
+    * On Start up, the following happens:
+        - Initial start - the OS boots and the EC2 user data(bootstrap) script is run; bootstrap script only run once during initial start
+        - Succeeding starts - the OS boots up
+        - Then the application starts, caches get warmed up
+- Hibernate - in-memory(RAM) state is preserved
+    - much faster for instance to boot because the OS is not stopped/restarted
+    - the RAM state is written to a file in the root EBS volume
+    - the root EBS volume must be encrypted

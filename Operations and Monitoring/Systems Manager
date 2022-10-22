@@ -1,0 +1,7 @@
+Helps manage EC2 and on-premise systems at scale
+Get operational insigts about the overall infrastructure state
+Easily detect issues
+Patching automation for enhanced compliance
+
+Needs to install the SSM agent on the the systems control
+Installed by default on Amazon Linux 2 AMI and some Ubuntu AMI

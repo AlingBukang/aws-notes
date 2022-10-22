@@ -1,0 +1,73 @@
+
+# Unified Cloudwatch Agent
+ - For virtuals servers (EC2 instances, on-premise servers)
+ - To collect additional additional system-level metrics such as RAM, processes, used disk space, etc.
+ - No logs from EC2 instance will be sent to Cloudwatch without using an agent
+ - Centralised configuration via SSM Parameter Store or the agent
+ - Needs correct IAM permissions
+ - Default namespace for metrics collected by the Unified Agent is called CWAgent; this can be changed
+
+ * procstat Plugin
+    - collect metrics and monitor system utilisation of individual processes
+    - processes can be monitored by:
+        - pid_file - name of process ID(pid)
+        - exe - process name filter(RegEx)
+        - pattern - command lines used to start the process(RegEx)
+    - metrics collected by procstat plugin begins with 'procstat' prefix
+    Use Case:
+     - Collect memory usage per process
+     - Collect CPU time per process
+
+
+# Metrics for EC2
+ - AWS Provided Metrics:
+    - Basic monitoring(default); metrics are collected at a 5 minute interval
+    - Detailed monitoring(paid); metrics are collected at a 1 minute interval
+    - Tracks CPU, Network, Disk and Status Check Metrics
+ - Custom Metrics:
+    - Basic resolution: 1 minute
+    - High resolution: can be as low as 1 second resolution
+    - Includes RAM, application level metrics in addition to the AWS provided
+    - Needs to configure correct IAM permissions on the EC2 instance role
+
+ EC2 included metrics:
+ - CPU - CPU utilisation; credit usage/balance   
+ - Network - network in/out
+ - Status check:
+    - Instance status - check the EC2 VM
+    - System status - check the underlying hardware
+ - Disk - read/write for ops/bytes (for instance store)
+ *Note: RAM is NOT included in AWS EC2 provided metrics, use custom for this
+
+
+
+
+# Status Checks
+- System checks
+   - monitors the AWS systems on which your instaces run
+   Issues:
+      - Problems with the underlying host
+         - loss of network connectivity
+         - loss of system power
+         - software issues on the physical host
+         - hardware issues on the physical host that impact network reachability
+   Resolution options:
+         - report to AWS and wait for it to be resolved
+         - move the EC2 instance to a new host - stop & start the instance if EBS backed      
+
+
+
+- Instance checks
+   - monitors the software and network configuration of your individual instance
+   Issues:
+      - incorrect networking or startup configuration
+      - exhausted memory
+      - corrupted file system
+      - incompatible kernel
+   Resolutions options:
+      - you tribubleshoot
+      - restart the instance
+      - modify the EC2 instance configuration   
+
+
+      
